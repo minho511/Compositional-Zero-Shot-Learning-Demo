@@ -1,0 +1,36 @@
+---
+dataset:
+  dataset: cgqa
+  splitname: compositional-split-natural
+  train_only: true
+  test_set: val
+
+model_params:
+  image_extractor: vit-dino
+  emb_type: word2vec
+  nlayer: 2
+  mlp_layers: [768]
+  delta_encoder: [1024]
+  delta_encoder_layers: 2
+  delta_decoder: [768]
+  delta_decoder_layers: 2
+  
+training:
+  max_epochs: 50
+  batch_size: 128
+  update_image_features: false # Fine tune the image backbone?
+  update_word_features: true
+  extract_feature_vectors: true
+  lr: 5.0e-05
+  lr_image_extractor: 5.0e-05
+  lr_word_embedder: 5.0e-05
+  cosine_scale: 0.05
+  lr_delta_encoder: 5.0e-05
+  rank: 0
+
+eval:
+  test_batch_size: 512
+  topk: 1
+  alpha: 0.0
+exp:
+  seed: 214

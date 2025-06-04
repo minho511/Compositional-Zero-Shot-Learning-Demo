@@ -239,7 +239,10 @@ class CompositionDataset(Dataset):
         Returns
             train_data, val_data, test_data: List of tuple of image, attrs, obj
         '''
-        data = torch.load(ospj(self.root, 'metadata_{}.t7'.format(self.split)))
+        from huggingface_hub import hf_hub_download
+        ckpt = hf_hub_download(repo_id="Minho511/pdt-cgqa-czsl", filename='metadata_compositional-split-natural.t7')
+        data = torch.load(ckpt, map_location='cpu')
+        # data = torch.load(ospj(self.root, 'metadata_{}.t7'.format(self.split)))
 
         train_data, val_data, test_data = [], [], []
 

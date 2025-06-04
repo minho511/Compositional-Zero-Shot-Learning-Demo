@@ -23,8 +23,7 @@ DATA_FOLDER= 'I:/Datasets'
 root = DATA_FOLDER+'/ut-zap50k'
 os.makedirs(root+'/images',exist_ok=True)
 
-ckpt = hf_hub_download(repo_id="Minho511/pdt-cgqa-czsl", filename='metadata_compositional-split-natural.t7')
-data = torch.load(ckpt, map_location='cpu')
+
 for instance in tqdm.tqdm(data):
 	image, attr, obj = instance['_image'], instance['attr'], instance['obj']
 	old_file = '%s/%s'%(root, image)

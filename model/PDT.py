@@ -44,7 +44,7 @@ class PDT(nn.Module):
             self.train_attrs, self.train_objs, self.train_pairs = self.val_attrs, self.val_objs, self.val_pairs
         
         pairs = [(dset.attr2idx[attr], dset.obj2idx[obj]) for attr, obj in dset.pairs]
-        self.pairs = torch.LongTensor(pairs).cuda()
+        self.pairs = torch.LongTensor(pairs)
         
         attr_word_emb_file = '{}_{}_attr.save'.format(args.dataset, args.emb_type)
         attr_word_emb_file = os.path.join(args.main_root, 'word embedding', attr_word_emb_file)

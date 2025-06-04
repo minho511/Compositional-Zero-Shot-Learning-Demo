@@ -67,6 +67,11 @@ demo = gr.Interface(fn=predict,
                         gr.Slider(minimum=0.0, maximum=1.0, value=0.5, step=0.01, label="Alpha (weight)")
                     ],
                     outputs=gr.Label(num_top_classes=5),
+                    examples=[
+                        ["examples/ex1.jpeg", 0.5],
+                        ["examples/ex2.jpeg", 0.5],
+                        ["examples/ex3.jpeg", 0.5],
+                    ],
                     title="Compositional Zero-Shot Inference Demo")
 
 demo.launch()

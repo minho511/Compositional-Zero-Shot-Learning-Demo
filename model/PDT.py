@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import copy
-from model.word_embedding import load_word_embeddings
+# from model.word_embedding import load_word_embeddings
 from model.common import MLP, Delta_MLP
 from model.losses import ReconLoss
 
@@ -52,15 +52,16 @@ class PDT(nn.Module):
         obj_word_emb_file = os.path.join(args.main_root, 'word embedding', obj_word_emb_file)
 
         print('  Load attribute word embeddings--')
-        pretrained_weight_attr = load_word_embeddings(dset.attrs, args)
-        emb_dim = pretrained_weight_attr.shape[1]
+        # pretrained_weight_attr = load_word_embeddings(dset.attrs, args)
+        # emb_dim = pretrained_weight_attr.shape[1]
+        emb_dim = 300
         self.attr_embedder = nn.Embedding(len(dset.attrs), emb_dim).to(args.device)
-        self.attr_embedder.weight.data.copy_(pretrained_weight_attr)
+        # self.attr_embedder.weight.data.copy_(pretrained_weight_attr)
 
         print('  Load object word embeddings--')
-        pretrained_weight_obj = load_word_embeddings(dset.objs, args)
+        # pretrained_weight_obj = load_word_embeddings(dset.objs, args)
         self.obj_embedder = nn.Embedding(len(dset.objs), emb_dim).to(args.device)
-        self.obj_embedder.weight.data.copy_(pretrained_weight_obj)
+        # self.obj_embedder.weight.data.copy_(pretrained_weight_obj)
 
         if not args.update_word_features:
             for param in self.attr_embedder.parameters():

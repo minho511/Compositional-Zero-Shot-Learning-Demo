@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-DATA_FOLDER = '/home/vcl/Desktop/minho/Datasets/CZSL'
+# DATA_FOLDER = '/home/vcl/Desktop/minho/Datasets/CZSL'
 
 def load_word_embeddings(vocab, args):
     if args.emb_type == 'glove':

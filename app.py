@@ -48,7 +48,7 @@ model = PDT(testset, args).to(args.device)
 
 ckpt_path = hf_hub_download(repo_id="Minho511/pdt-cgqa-czsl", filename='ckpt_best_auc_cgqa.t7')
 checkpoint = torch.load(ckpt_path, map_location='cpu')
-model.load_state_dict(checkpoint['net'])
+model.load_state_dict(checkpoint['net'], strict=False)
 model.eval()
 
 def predict(image, alpha):

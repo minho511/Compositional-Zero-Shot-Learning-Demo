@@ -51,26 +51,42 @@ checkpoint = torch.load(ckpt_path, map_location='cpu')
 model.load_state_dict(checkpoint['net'], strict=False)
 model.eval()
 
-def predict(image, alpha):
+seen_pair_set = set(testset.train_pairs)
+unseen_pair_set = set(testset.test_pairs)-seen_pair_set
+
+# test_pair_set = set(dset.test_pairs + dset.train_pairs)
+# masks = [1 if pair in test_pair_set else 0 for pair in dset.pairs]
+# closed_mask = torch.BoolTensor(masks)
+
+def predict(image, alpha, bias):
     image = Image.fromarray(image).convert("RGB")
     image = transform(image).unsqueeze(0)
     image = backbone(image)
     model.alpha = alpha
+    
     _, pred = model.demo_forward(image.to(args.device)) # top-1 or top-k 예측
+    for seen_pair in seen_pair_set:
+        pred[seen_pair] *= bias
+    for unseen_pair in unseen_pair_set:
+        pred[unseen_pair] *= (1-bias)
+
     sorted_preds = sorted(pred.items(), key=lambda x: x[1].item(), reverse=True)
-    return {f"{k[0]} {k[1]}": float(v) for k, v in sorted_preds}  # dict for gr.Label
+
+    return {f"{k[0]} {k[1]} {'(seen)' if k in seen_pair_set else '(unseen)'}": float(v) for k, v in sorted_preds}  # dict for gr.Label
 
 
 demo = gr.Interface(fn=predict,
                     inputs=[
                         gr.Image(type="numpy"),
-                        gr.Slider(minimum=0.0, maximum=1.0, value=0.5, step=0.01, label="Alpha (weight)")
+                        gr.Slider(minimum=0.0, maximum=1.0, value=0.5, step=0.01, label="Alpha (interpolation: (1−α)·comp + α·obj·attr)"),
+                        gr.Slider(minimum=0.0, maximum=1.0, value=0.5, step=0.01, label="Bias (offset to balance seen vs. unseen prediction scores)")
                     ],
                     outputs=gr.Label(num_top_classes=5),
                     examples=[
-                        ["examples/ex1.jpeg", 0.5],
-                        ["examples/ex2.jpeg", 0.5],
-                        ["examples/ex3.jpeg", 0.5],
+                        ["examples/ex1.jpeg", 0.5, 0.5],
+                        ["examples/ex2.jpeg", 0.5, 0.5],
+                        ["examples/ex3.jpeg", 0.5, 0.5],
+                        ["examples/ex4.jpeg", 0.5, 0.5],
                     ],
                     title="Compositional Zero-Shot Inference Demo")
 
